@@ -71,7 +71,7 @@ var HEIGHT = 360;
 var SMOOTHING = 0.8;
 let volumeSum = 0;
 
-const VOLUME_THRESHOLD = 1400;
+const VOLUME_THRESHOLD = 400;
 
 navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
@@ -117,7 +117,7 @@ function pcpAlg() {
 
 	volumeSum = 0;
 
-  for (var k = 20; k < 160 / 2; k++) { // k = 0,1,...,[(N/2) - 1]
+  for (var k = 20; k < freqsBuffer.length / 2; k++) { // k = 0,1,...,[(N/2) - 1]
 
 		const frequencyBin = k / N * fsr;
 		const frequencyValue = freqsBuffer[k]; //Math.pow(Math.abs(buffer[k]), 2);
