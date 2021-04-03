@@ -2,8 +2,8 @@ import 'phaser';
 import BoatScene from './BoatScene';
 
 const config = {
-	type: Phaser.AUTO,
-	backgroundColor: '#3232ff',
+	type: Phaser.WEBGL,
+	// backgroundColor: '#fff',
 	width: 2400,
 	height: 800,
 	physics: {
