@@ -15,15 +15,15 @@ export const enum Chords {
 	G = 'G'
 }
 
-export const ChordValues: {[name: string]: Array<Tone>} = {
-	[Chords.A]: ['C#', 'E', 'A'],
-	[Chords.Am]: ['C', 'E', 'A'],
-	[Chords.Bm]: ['D', 'F#', 'B'],
-	[Chords.C]: ['C', 'E', 'G'],
-	[Chords.D]: ['D', 'F#', 'A'],
-	[Chords.Dm]: ['D', 'F', 'A'],
-	[Chords.E]: ['E', 'G#', 'B'],
-	[Chords.Em]: ['E', 'G', 'B'],
-	[Chords.F]: ['C', 'F', 'A'],
-	[Chords.G]: ['D', 'G', 'B'],
+export const ChordValues: {[name: string]: number[]} = {
+	// [Chords.A]: ['C#', 'E', 'A'],
+	[Chords.Am]: [1.1, 0, 0, 0, 1.1, 0, 0, -0.3, 0, 1.1, 0, 0], // 'C', 'E', 'A'
+	// [Chords.Bm]: ['D', 'F#', 'B'],
+	[Chords.C ]: [1.1, 0, 0, 0, 1.1, 0, 0, 1.2, 0, -0.3, 0, 0], // 'C', 'E', 'G'
+	[Chords.D ]: [0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0], // 'D', 'F#', 'A'
+	// [Chords.Dm]: ['D', 'F', 'A'],
+	[Chords.E ]: [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1], // 'E', 'G#', 'B'
+	// [Chords.Em]: ['E', 'G', 'B'],
+	[Chords.F ]: [0.9, 0, 0, 0, 0, 1.1, 0, 0, 0, 0.9, 0, 0], // 'C', 'F', 'A'
+	// [Chords.G]: ['D', 'G', 'B'],
 }

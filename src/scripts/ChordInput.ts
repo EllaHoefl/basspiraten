@@ -8,34 +8,21 @@ export default class ChordInput {
 	audioContext: AudioContext;
 	analyser: AnalyserNode;
 	pitchClassProfiles = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Pitch Class Profiles
-	normalizedPitchClassProfiles: {[name: string]: number} = {
-		'C': 0,
-		'C#': 0,
-		'D': 0,
-		'D#': 0,
-		'E': 0,
-		'F': 0,
-		'F#': 0,
-		'G': 0,
-		'G#': 0,
-		'A': 0,
-		'A#': 0,
-		'B': 0,
-	};
+	normalizedPitchClassProfiles: number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 	buffer: Uint8Array;
 	mediaStreamSource: MediaStreamAudioSourceNode;
 	volumeSum: number = 0;
-	volumeThreshold: number = 200;
+	volumeThreshold: number = 600;
 
 	startRecording() {
 		const constraints = {
 			audio: {
 				mandatory: {
 					// Disable audio processing by browser
-					googEchoCancellation: false,
-					googAutoGainControl: false,
-					googNoiseSuppression: false,
-					googHighpassFilter: false
+					googEchoCancellation: 'false',
+					googAutoGainControl: 'false',
+					googNoiseSuppression: 'false',
+					googHighpassFilter: 'false'
 				},
 				optional: []
 			},
@@ -79,7 +66,7 @@ export default class ChordInput {
 
 		this.volumeSum = 0;
 
-		for (var k = 20; k < 400 / 2; k++) { // 160
+		for (let k = 20; k < 400 / 2; k++) { // 160
 
 			const frequencyBin = k / N * this.audioContext.sampleRate;
 			const frequencyValue = this.buffer[k]; // Math.pow(Math.abs(buffer[k]), 2);
@@ -105,9 +92,9 @@ export default class ChordInput {
 		const thirdHighestValue = pcpCopy[2];
 		for (let i = 0; i < this.pitchClassProfiles.length; i++) {
 			const value = this.pitchClassProfiles[i] >= thirdHighestValue ?
-				1 : 0;
-				// this.pitchClassProfiles[i] / thirdHighestValue;
-			this.normalizedPitchClassProfiles[TONE_ORDER[i]] = value;
+				1 :
+				this.pitchClassProfiles[i] / thirdHighestValue;
+			this.normalizedPitchClassProfiles[i] = value;
 		}
 	}
 
@@ -121,9 +108,9 @@ export default class ChordInput {
 		const keys = Object.keys(ChordValues);
 		const chordAmplitudes: {[name: string]: number} = {};
 		keys.forEach((key) => {
-			const tones = ChordValues[key];
-			chordAmplitudes[key] = tones.reduce((sum, tone) => {
-				return sum + this.normalizedPitchClassProfiles[tone];
+			const toneMultipliers = ChordValues[key];
+			chordAmplitudes[key] = toneMultipliers.reduce((sum, toneValue, index) => {
+				return sum + this.normalizedPitchClassProfiles[index] * toneValue;
 			}, 0);
 		});
 

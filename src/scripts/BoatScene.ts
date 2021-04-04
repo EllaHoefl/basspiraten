@@ -51,6 +51,7 @@ export default class BoatScene extends Phaser.Scene
 		this.player.setCollideWorldBounds(true); // don't go out of the map
 		this.player.setDrag(100);
 		this.player.setScale(0.5);
+		this.player.setDepth(1);
 
 		this.physics.add.collider(this.sea, this.player);
 
@@ -59,13 +60,14 @@ export default class BoatScene extends Phaser.Scene
 		this.enemy.setBounce(0.2); // enemy will bounce from items
 		this.enemy.setCollideWorldBounds(true); // don't go out of the map
 		this.enemy.setDrag(100);
+		this.enemy.setDepth(3);
 
 		this.physics.add.collider(this.sea, this.enemy);
 
 		// create power sprite (lightning bolt)
 		this.power = this.add.sprite(100, 150, 'power', 0);
 
-		this.power.setDepth(3);
+		this.power.setDepth(4);
 		this.power.setScale(0.4);
 
 		// movement from left to right
@@ -107,11 +109,11 @@ export default class BoatScene extends Phaser.Scene
 		}
 		switch(chordsPlayed) {
 			case Chords.C: {
-				this.player.body.setAccelerationX(-70); // move left
+				this.player.body.setAccelerationX(-150); // move left
 				break;
 			}
 			case Chords.Am: {
-				this.player.body.setAccelerationX(70); // move right
+				this.player.body.setAccelerationX(150); // move right
 				break;
 			}
 			case Chords.F: {
@@ -131,6 +133,7 @@ export default class BoatScene extends Phaser.Scene
 						this.enemy.setVisible(false);
 					} else {
 						const lightningBolt = this.add.image(this.enemy.x, this.enemy.y - 256, 'lightning');
+						lightningBolt.setDepth(2);
 						setTimeout(() => {
 							lightningBolt.destroy();
 						}, 600);
