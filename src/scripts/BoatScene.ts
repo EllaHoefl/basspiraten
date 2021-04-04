@@ -22,7 +22,7 @@ export default class BoatScene extends Phaser.Scene
 
 	preload ()
 	{
-		this.load.image('ship', 'assets/pirate-ship-colored-small.png');
+		this.load.image('ship', 'assets/ship.png');
 		this.load.image('sailing-ship', 'assets/sailing-ship.png');
 		this.load.image('sea', 'assets/sea.png');
 		this.load.image('clouds', 'assets/clouds.png');
