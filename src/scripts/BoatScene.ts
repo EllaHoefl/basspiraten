@@ -22,15 +22,16 @@ export default class BoatScene extends Phaser.Scene
 
 	preload ()
 	{
-		this.load.image('ship', 'assets/pirate-ship-colored-small.png');
+		this.load.image('ship', 'assets/ship.png');
 		this.load.image('sailing-ship', 'assets/sailing-ship.png');
 		this.load.image('sea', 'assets/sea.png');
 		this.load.image('clouds', 'assets/clouds.png');
 		this.load.image('clouds-small', 'assets/clouds-small.png');
 		this.load.image('wave', 'assets/wave.png');
 		this.load.image('stone', 'assets/stone.png');
-		this.load.spritesheet('lightning', 'assets/lightning_bolt_filled.png', 
-			{ frameWidth: 256, frameHeight: 512 } );
+		this.load.spritesheet('power', 'assets/lightning_bolt_filled.png', 
+		{ frameWidth: 256, frameHeight: 512 } );
+		this.load.image('lighning', 'assets/lightning.png'); 
 	}
 
 	create ()
@@ -64,7 +65,7 @@ export default class BoatScene extends Phaser.Scene
 		this.physics.add.collider(this.sea, this.enemy);
 
 		// create power sprite (lightning bolt)
-		this.power = this.add.sprite(100, 150, 'lightning', 0);
+		this.power = this.add.sprite(100, 150, 'power', 0);
 		
 		this.power.setDepth(3);
 		this.power.setScale(0.4);
@@ -98,7 +99,7 @@ export default class BoatScene extends Phaser.Scene
       x: 2400,
       y: { min: 450, max: 800},
     });
-		this.physics.add.collider(this.player, stoneEmitter);
+		// this.physics.add.collider(this.player, stoneEmitter);
 
 	}
 
