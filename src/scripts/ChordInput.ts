@@ -1,9 +1,8 @@
 import { Chords, TONE_ORDER, ChordValues } from './Chords';
 
-const N = 8192; //4096;//8192;//2048; // Samples of Sound
+const N = 8192; // 4096;//8192;//2048; // Samples of Sound
 const REFERENCE_FREQUENCE = 261.63; // Reference frequency middle C (C4)
 const SMOOTHING = 0.8;
-
 
 export default class ChordInput {
 	audioContext: AudioContext;
@@ -27,19 +26,18 @@ export default class ChordInput {
 	mediaStreamSource: MediaStreamAudioSourceNode;
 	volumeSum: number = 0;
 	volumeThreshold: number = 200;
-	
 
 	startRecording() {
-		var constraints = {
-			"audio": {
-				"mandatory": {
+		const constraints = {
+			audio: {
+				mandatory: {
 					// Disable audio processing by browser
-					"googEchoCancellation": "false",
-					"googAutoGainControl": "false",
-					"googNoiseSuppression": "false",
-					"googHighpassFilter": "false"
+					googEchoCancellation: false,
+					googAutoGainControl: false,
+					googNoiseSuppression: false,
+					googHighpassFilter: false
 				},
-				"optional": []
+				optional: []
 			},
 		} as any;
 
@@ -49,13 +47,11 @@ export default class ChordInput {
 			// Create an analyzer node to process the audio
 			this.analyser = this.audioContext.createAnalyser();
 			this.analyser.smoothingTimeConstant = SMOOTHING;
-			this.analyser.fftSize = N; //FFT_SIZE;
-			//analyser.minDecibels = -140
-			//analyser.maxDecibels = 0
+			this.analyser.fftSize = N;
+
 			this.analyser.fftSize = N;
 			const bufferLen = N / 2;
-			//bufferLen = analyser.frequencyBinCount;
-			console.log('bufferLen = ' + bufferLen);
+
 			this.buffer = new Uint8Array(bufferLen);
 
 			// Create an AudioNode from the stream.
@@ -67,12 +63,9 @@ export default class ChordInput {
 			window.setInterval(() => {
 				this.performPcpAlgorithm();
 			}, 50);
-
-			// // Visualizer
-			// draw();
 		})
-		.catch(function(err) {
-			console.log(err.name + ": " + err.message);
+		.catch((err) => {
+			console.log(err.name + ': ' + err.message);
 		});
 	}
 
@@ -89,7 +82,7 @@ export default class ChordInput {
 		for (var k = 20; k < 400 / 2; k++) { // 160
 
 			const frequencyBin = k / N * this.audioContext.sampleRate;
-			const frequencyValue = this.buffer[k]; //Math.pow(Math.abs(buffer[k]), 2);
+			const frequencyValue = this.buffer[k]; // Math.pow(Math.abs(buffer[k]), 2);
 			if (frequencyValue > highestFrequencyValue) {
 				highestFrequencyValue = frequencyValue;
 				highestFrequency = frequencyBin;
@@ -110,10 +103,10 @@ export default class ChordInput {
 	normalizePitchClassProfiles() {
 		const pcpCopy = [...this.pitchClassProfiles].sort((a, b) => b - a);
 		const thirdHighestValue = pcpCopy[2];
-		for (var i = 0; i < this.pitchClassProfiles.length; i++) {
+		for (let i = 0; i < this.pitchClassProfiles.length; i++) {
 			const value = this.pitchClassProfiles[i] >= thirdHighestValue ?
-				1 :
-				this.pitchClassProfiles[i] / thirdHighestValue;
+				1 : 0;
+				// this.pitchClassProfiles[i] / thirdHighestValue;
 			this.normalizedPitchClassProfiles[TONE_ORDER[i]] = value;
 		}
 	}
@@ -126,19 +119,24 @@ export default class ChordInput {
 		this.normalizePitchClassProfiles();
 
 		const keys = Object.keys(ChordValues);
-		const value = keys.find((key) => {
+		const chordAmplitudes: {[name: string]: number} = {};
+		keys.forEach((key) => {
 			const tones = ChordValues[key];
-			for (let tone of tones) {
-				if (this.normalizedPitchClassProfiles[tone] < 0.9) {
-					return false;
-				}
-			}
-			return true;
+			chordAmplitudes[key] = tones.reduce((sum, tone) => {
+				return sum + this.normalizedPitchClassProfiles[tone];
+			}, 0);
 		});
 
-		if (value) {
-			return value;
-		}
-		return Chords.NONE;
+		let highestAmplitude = 0;
+		let highestChordKey: string = Chords.NONE;
+		Object.keys(chordAmplitudes).forEach((chord) => {
+			const amplitude = chordAmplitudes[chord];
+			if (highestAmplitude < amplitude && amplitude > 2.7) {
+				highestAmplitude = amplitude;
+				highestChordKey = chord;
+			}
+		});
+
+		return highestChordKey;
 	}
 }

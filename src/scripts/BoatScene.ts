@@ -13,15 +13,13 @@ export default class BoatScene extends Phaser.Scene
 	cursor: Phaser.Types.Input.Keyboard.CursorKeys;
 	clouds: Phaser.GameObjects.TileSprite;
 	cloudsSmall: Phaser.GameObjects.TileSprite;
-  chordInput: ChordInput;
+	chordInput: ChordInput;
 
-	constructor (scene: Phaser.Scene, x: number, y: number)
-	{
+	constructor (scene: Phaser.Scene, x: number, y: number) {
 		super('boat');
 	}
 
-	preload ()
-	{
+	preload () {
 		this.load.image('ship', 'assets/ship.png');
 		this.load.image('sailing-ship', 'assets/sailing-ship.png');
 		this.load.image('sea', 'assets/sea.png');
@@ -29,111 +27,116 @@ export default class BoatScene extends Phaser.Scene
 		this.load.image('clouds-small', 'assets/clouds-small.png');
 		this.load.image('wave', 'assets/wave.png');
 		this.load.image('stone', 'assets/stone.png');
-		this.load.spritesheet('power', 'assets/lightning_bolt_filled.png', 
+		this.load.spritesheet('power', 'assets/lightning_bolt_filled.png',
 		{ frameWidth: 256, frameHeight: 512 } );
-		this.load.image('lighning', 'assets/lightning.png'); 
+		this.load.image('lightning', 'assets/lightning.png');
 	}
 
-	create ()
-	{
+	create () {
 		// initialize chord input and start recording
-    this.chordInput = new ChordInput();
-    this.chordInput.startRecording();
+		this.chordInput = new ChordInput();
+		this.chordInput.startRecording();
 
 		// set background image
 		this.sea = this.add.image(1200, 400, 'sea');
 
 		// set boundaries of game world
 		this.physics.world.bounds.width = this.sea.width;
-    this.physics.world.bounds.height = this.sea.height;
-    this.physics.world.bounds.top = 300;
+		this.physics.world.bounds.height = this.sea.height;
+		this.physics.world.bounds.top = 300;
 
 		// create the player sprite
 		this.player = this.physics.add.image(150, 600, 'ship');
 		this.player.setBounce(0.2); // player will bounce from items
 		this.player.setCollideWorldBounds(true); // don't go out of the map
-    this.player.setDrag(100);
-			
+		this.player.setDrag(100);
+		this.player.setScale(0.5);
+
 		this.physics.add.collider(this.sea, this.player);
 
 		// create enemy sprite
 		this.enemy = this.physics.add.image(2000, 600, 'sailing-ship');
 		this.enemy.setBounce(0.2); // enemy will bounce from items
 		this.enemy.setCollideWorldBounds(true); // don't go out of the map
-    this.enemy.setDrag(100);
-			
+		this.enemy.setDrag(100);
+
 		this.physics.add.collider(this.sea, this.enemy);
 
 		// create power sprite (lightning bolt)
 		this.power = this.add.sprite(100, 150, 'power', 0);
-		
+
 		this.power.setDepth(3);
 		this.power.setScale(0.4);
 
 		// movement from left to right
 		this.cursor = this.input.keyboard.createCursorKeys();
 
-    this.clouds = this.add.tileSprite(640, 200, 3600, 400, "clouds");
-    this.cloudsSmall = this.add.tileSprite(640, 200, 3600, 400, "clouds-small");
+		this.clouds = this.add.tileSprite(640, 200, 3600, 400, "clouds");
+		this.cloudsSmall = this.add.tileSprite(640, 200, 3600, 400, "clouds-small");
 
 		// create waves
-    const waveParticles = this.add.particles('wave');
-    const waveEmitter = waveParticles.createEmitter({
-      scale: 0.3,
-      speedX: -300,
-      lifespan: 8000,
-      frequency: 800,
-      maxParticles: 0,
-      x: 2400,
-      y: { min: 450, max: 800},
-    });
+		const waveParticles = this.add.particles('wave');
+		const waveEmitter = waveParticles.createEmitter({
+			scale: 0.3,
+			speedX: -300,
+			lifespan: 8000,
+			frequency: 800,
+			maxParticles: 0,
+			x: 2400,
+			y: { min: 450, max: 800},
+		});
 
 		// create stones
 		const stoneParticles = this.add.particles('stone');
-    const stoneEmitter = stoneParticles.createEmitter({
-      scale: 0.4,
-      speedX: -300,
-      lifespan: 8000,
-      frequency: 4000,
-      maxParticles: 0,
-      x: 2400,
-      y: { min: 450, max: 800},
-    });
+		const stoneEmitter = stoneParticles.createEmitter({
+			scale: 0.4,
+			speedX: -300,
+			lifespan: 8000,
+			frequency: 4000,
+			maxParticles: 0,
+			x: 2400,
+			y: { min: 450, max: 800},
+		});
 		// this.physics.add.collider(this.player, stoneEmitter);
-
 	}
 
-	update ()
-	{ 
+	update () {
 		const chordsPlayed = this.chordInput.getChordPlayed();
-    console.log(this.chordInput.getChordPlayed());
+		if (chordsPlayed !== Chords.NONE) {
+			console.log(this.chordInput.getChordPlayed());
+		}
 		switch(chordsPlayed) {
 			case Chords.C: {
-        this.player.body.setAccelerationX(-70); // move left
+				this.player.body.setAccelerationX(-70); // move left
 				break;
 			}
 			case Chords.Am: {
-        this.player.body.setAccelerationX(70); // move right
+				this.player.body.setAccelerationX(70); // move right
 				break;
 			}
 			case Chords.F: {
-        this.player.body.setAccelerationY(-30); // move up
+				this.player.body.setAccelerationY(-30); // move up
 				break;
 			}
 			case Chords.D: {
-        this.player.body.setAccelerationY(30); // move down
+				this.player.body.setAccelerationY(30); // move down
 				break;
 			}
 			case Chords.E: {
-				this.powerLevel += 1; 
+				this.powerLevel += 1;
 				if (this.powerLevel >= 100) {
 					this.powerLevel = 0;
 					this.enemyHealth -= 14;
 					if (this.enemyHealth <= 0) {
 						this.enemy.setVisible(false);
+					} else {
+						const lightningBolt = this.add.image(this.enemy.x, this.enemy.y - 256, 'lightning');
+						setTimeout(() => {
+							lightningBolt.destroy();
+						}, 600);
 					}
 				}
-        this.power.setFrame(Math.floor(this.powerLevel / 100 * 8)); // changes frame when using power
+				this.power.setFrame(Math.floor(this.powerLevel / 100 * 8)); // changes frame when using power
 				break;
 			}
 			default: {
@@ -141,8 +144,8 @@ export default class BoatScene extends Phaser.Scene
 				this.player.body.setAccelerationY(0);
 			}
 		}
-    this.clouds.tilePositionX += 0.5;
-    this.cloudsSmall.tilePositionX += 0.25;
+		this.clouds.tilePositionX += 0.5;
+		this.cloudsSmall.tilePositionX += 0.25;
 
 		if (!this.player)
 		{
