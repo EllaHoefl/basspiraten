@@ -14,6 +14,7 @@ export default class BoatScene extends Phaser.Scene
 	clouds: Phaser.GameObjects.TileSprite;
 	cloudsSmall: Phaser.GameObjects.TileSprite;
   chordInput: ChordInput;
+	lightningParticles: Phaser.GameObjects.Particles.ParticleEmitterManager;
 
 	constructor (scene: Phaser.Scene, x: number, y: number)
 	{
@@ -31,7 +32,7 @@ export default class BoatScene extends Phaser.Scene
 		this.load.image('stone', 'assets/stone.png');
 		this.load.spritesheet('power', 'assets/lightning_bolt_filled.png', 
 		{ frameWidth: 256, frameHeight: 512 } );
-		this.load.image('lighning', 'assets/lightning.png'); 
+		this.load.image('lightning', 'assets/lightning.png'); 
 	}
 
 	create ()
@@ -101,6 +102,9 @@ export default class BoatScene extends Phaser.Scene
     });
 		// this.physics.add.collider(this.player, stoneEmitter);
 
+		// lightning effect
+		this.lightningParticles = this.add.particles('lightning');
+
 	}
 
 	update ()
@@ -165,7 +169,16 @@ export default class BoatScene extends Phaser.Scene
 			this.enemy.tint = 0xff0000 + 
 				0x00ff00 * this.enemyHealth / 100 +
 				0x0000ff * this.enemyHealth / 100;
+			
+			const lightningEmitter = this.lightningParticles.createEmitter({
+				scale: 0.4,
+				speedX: -300,
+				lifespan: 8000,
+				frequency: 800,
+				maxParticles: 0,
+				x: 2400,
+				y: { min: 0, max: 450},
+			});
 		}
-
 	}
 }
